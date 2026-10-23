@@ -38,3 +38,11 @@ HTML structure	Workspace header, counters, form, filters, and task container.
 
  Mamah Chukwuka Hillary:
  Storage and testing	Manage the task array, save/load through localStorage, and coordinate final testing.
+
+
+
+
+
+Pascaline Amarachukwu Chielo
+
+Completion and deletion	Toggle completed/pending status and delete the selected task.
