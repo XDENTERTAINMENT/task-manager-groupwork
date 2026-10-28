@@ -150,6 +150,10 @@ footer {
 }
 
 
+.errormsg{
+  color:red;
+}
+
 /* mobile styling */
 
 @media (max-width: 600px) {

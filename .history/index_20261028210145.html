@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personal-Task-Manager</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
+      integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+ <body>
+    <header>
+      <h1>Task Manager</h1>
+      <p>what will i achieve today</p>
+    </header>
+    <!-- the main -->
+    <main>
+      <section class="section1">
+        <div>
+          <div class="icon1"><i class="fa-regular fa-calendar"></i></div>
+          <div class="section-1-child">
+            <p>Total task</p>
+            <p id="total-task">6</p>
+          </div>
+        </div>
+
+        <div>
+          <div class="icon2"><i class="fa-regular fa-clock"></i></div>
+          <div class="section-1-child">
+            <p>Pending</p>
+            <p id="pending-task">4</p>
+          </div>
+        </div>
+
+        <div>
+          <div class="icon3"><i class="fa-solid fa-check"></i></div>
+          <div class="section-1-child">
+            <p>completed</p>
+            <p id="completed-task">2</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- section 2 -->
+      <section class="section2">
+        <!-- the create task section -->
+        <div class="create-tax">
+          <h3>create a task</h3>
+
+          <form id="taskform" action="submit">
+            <label for="tasktitle">
+              Task Title
+            </label>
+            <input type="text" id="tasktitleinput" />
+            <p id titleerror></p>
+
+            <label for="taskdesc">
+              description
+            </label>
+            <textarea class="textarea" id="taskdescinput"></textarea>
+            <p id="descerror"></p>
+
+            <label for="priority">
+              priority
+            </label>
+            <select id="choose">
+                <option value="">choose a priority</option>
+                <option value="">High</option>
+                <option value="">Medium</option>
+                <option value="">low</option>
+              </select>
+
+            <label for="date">
+              Due date
+            </label>
+            <input id="dateid" type="date"/>
+
+            <button class="form-button"  type="submit">save task</button>
+          </form>
+        </div>
+
+        <!-- task mapping -->
+
+        <div class="task-mapping">
+          <h3>your task (6)</h3>
+          <p>your saved task all in one place</p>
+          <div>
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="search" />
+          </div>
+
+          <!-- the card -->
+          <div class="card">
+            <input type="checkbox" />
+            <div>
+              <h3>build the task</h3>
+              <p>title and priority</p>
+              <p id="priority">high</p>
+            </div>
+            <p>date</p>
+          </div>
+          <!-- the inline editing -->
+          <div class="inline-button">
+            <button>
+              <div><i class="fa-solid fa-pen"></i></div>
+              update
+            </button>
+            <button class="save">
+              <div><i class="fa-solid fa-floppy-disk"></i></div>
+              save
+            </button>
+            <button class="delete">
+              <div class="trash"><i class="fa-solid fa-trash"></i></div>
+              delete
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- the footer -->
+    <footer>all right reserved</footer>
+
+    <script src=""></script>
+  </body>
+</html>
