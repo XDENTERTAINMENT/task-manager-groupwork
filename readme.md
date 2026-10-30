@@ -3,7 +3,7 @@ DOM and integration	Collect IDs, connect event listeners, call everyone’s func
 
 
 Nnamdi lleh (Assistant): 
-Editing and saving	Open inline editing, validate changes, save updates, and cancel edits.
+Editing and saving	Open inline editing, validate changes, save updates, and cancel edits and delete the selected task.
 
 
 
@@ -45,4 +45,4 @@ HTML structure	Workspace header, counters, form, filters, and task container.
 
 Pascaline Amarachukwu Chielo
 
-Completion and deletion	Toggle completed/pending status and delete the selected task.
+Completion and deletion	Toggle completed/pending status.
