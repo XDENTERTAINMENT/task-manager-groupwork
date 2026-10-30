@@ -4,14 +4,14 @@ const taskDescInput = document.getElementById("taskDesc");
 const titleError = document.getElementById("titleError");
 const descError = document.getElementById("descError");
 const choose = document.getElementById("choose");
-const  date  = document.getElementById("dateId")
+const  date  = document.getElementById("dateId");
+const container = document.getElementById("container");
 
-
-const display = (e) => {
+const handleSubmit = (e) => {
   e.preventDefault();
 
   const task = {
-    title: taskTitleInput.value.trim(),
+    titles: taskTitleInput.value.trim(),
     description: taskDescInput.value.trim(),
     level: choose.value,
     time:date.value,
@@ -19,26 +19,60 @@ const display = (e) => {
 
   console.log(task);
 
-  const { title, description } = task;
+  const { titles, description } = task;
 
-  if (title === "") {
+  titleError.textContent = "";
+    descError.textContent = "";
+
+  if (titles === "") {
     titleError.textContent = "input can not be empty";
-  } else if (title.length < 5) {
+  } else if (titles.length < 5) {
     titleError.textContent = "characters should not be less than 5";
   } else if (description === "") {
     descError.textContent = " input can not be empty";
   } else if (description.length < 10) {
     descError.textContent = "characters should not be less than 10";
   } else {
-    titleError.textContent = "";
-    descError.textContent = "";
+    saveTask(task);
+  renderTask();
   }
-
-    taskForm.reset()
+  
+    /*taskForm.reset()*/
  
 };
 
+function saveTask(task) {
+  const tasks = JSON.parse(localStorage.getItem("Mytask")) || [];
+  tasks.push(task);
+  localStorage.setItem("Mytask", JSON.stringify(tasks));
+}
+
+function getTask() {
+  return JSON.parse(localStorage.getItem("Mytask")) || [];
+}
+
+function clearData(){
+  localStorage.clear(task);
+}
+
+function renderTask() {
+  const render = getTask();
+
+  const validTasks = render.filter(data => data !== null);
+
+  container.innerHTML = validTasks.map(data => `<div>
+    <h3>${data.titles}</h3>
+    <p>${data.description}</p>
+    <p>${data.level}</p>
+    <p>${data.time}</p>
+  </div>`).join("");
+  return validTasks;
+}
+
+
+console.log(renderTask)
+taskForm.addEventListener("submit", handleSubmit);
 
 
 
-taskForm.addEventListener("submit", display);
+
