@@ -9,6 +9,10 @@ const date = document.getElementById("dateId");
 const container = document.getElementById("container");
 const cleardata = document.getElementById("cleardata");
 
+const pendingTask = document.getElementById("pending-task");
+const completedTask = document.getElementById("completed-task");
+const totalTask = document.getElementById("total-task");
+
 // GENERATE UNIQUE IDs
 function generateId() {
   return crypto.randomUUID();
@@ -35,6 +39,7 @@ const handleSubmit = (e) => {
     description: taskDescInput.value.trim(),
     level: choose.value,
     time: date.value,
+    completed: false
   };
 
   const { titles, description } = task;
@@ -50,13 +55,41 @@ const handleSubmit = (e) => {
     descError.textContent = "Input cannot be empty";
   } else if (description.length < 10) {
     descError.textContent = "Characters should not be less than 10";
+  } else if (!task.time || Number.isNaN(Date.parse(task.time))) {
+    alert("Please select a valid due date and time.");
   } else {
     saveTask(task);
     taskForm.reset();
   }
 };
 
-// SAVE TASK TO LOCAL STORAGE
+// GET TASKS
+function getTask() {
+  const tasks = JSON.parse(localStorage.getItem("Mytask")) || [];
+
+  // Add IDs and completion status to older tasks
+  let changed = false;
+
+  tasks.forEach((task) => {
+    if (!task.id) {
+      task.id = generateId();
+      changed = true;
+    }
+
+    if (typeof task.completed !== "boolean") {
+      task.completed = false;
+      changed = true;
+    }
+  });
+
+  if (changed) {
+    localStorage.setItem("Mytask", JSON.stringify(tasks));
+  }
+
+  return tasks;
+}
+
+// SAVE TASK
 function saveTask(task) {
   const tasks = getTask();
 
@@ -67,15 +100,43 @@ function saveTask(task) {
   renderTask();
 }
 
-// GET TASKS
-function getTask() {
-  const tasks = JSON.parse(localStorage.getItem("Mytask")) || [];
-  return tasks;
+// UPDATE DASHBOARD STATISTICS
+function updateStat() {
+  const tasks = getTask();
+
+  const total = tasks.length;
+
+  const completed = tasks.filter(
+    (task) => task.completed === true
+  ).length;
+
+  const pending = tasks.filter(
+    (task) => task.completed !== true
+  ).length;
+
+  if (totalTask) {
+    totalTask.textContent = total;
+  }
+
+  if (completedTask) {
+    completedTask.textContent = completed;
+  }
+
+  if (pendingTask) {
+    pendingTask.textContent = pending;
+  }
 }
 
-// CLEAR LOCAL STORAGE DATA
+// CLEAR TASKS
 function clearData() {
+  const confirmClear = confirm(
+    "Are you sure you want to clear all tasks?"
+  );
+
+  if (!confirmClear) return;
+
   localStorage.removeItem("Mytask");
+
   renderTask();
 }
 
@@ -85,14 +146,30 @@ function renderTask() {
 
   container.innerHTML = tasks
     .map((data) => `
-      <div class="parentdiv" data-id="${escapeHTML(data.id)}">
-  
+      <div
+        class="parentdiv ${data.completed ? "completed" : ""}"
+        data-id="${escapeHTML(data.id)}"
+      >
+
+        <div class="task-status">
+          <label>
+            <input
+              type="checkbox"
+              class="complete-checkbox"
+              data-action="complete"
+              ${data.completed ? "checked" : ""}
+            >
+            Mark as completed
+          </label>
+        </div>
 
         <div class="taskmapping">
 
           <div>
-           
-            <h3 class="title">${escapeHTML(data.titles)}</h3>
+            <h3 class="title">
+              ${escapeHTML(data.titles)}
+            </h3>
+
             <input
               class="edit-title"
               type="text"
@@ -102,19 +179,26 @@ function renderTask() {
           </div>
 
           <div>
-           
-            <p class="description">${escapeHTML(data.description)}</p>
-            <textarea class="edit-description" hidden>${escapeHTML(data.description)}</textarea>
+            <p class="description">
+              ${escapeHTML(data.description)}
+            </p>
+
+            <textarea
+              class="edit-description"
+              hidden
+            >${escapeHTML(data.description)}</textarea>
           </div>
 
           <div>
-           
-            <p class="priority">${escapeHTML(data.level)}</p>
+            <p class="priority">
+              ${escapeHTML(data.level)}
+            </p>
           </div>
 
           <div>
-           
-            <p class="date">${escapeHTML(data.time)}</p>
+            <p class="date">
+              ${escapeHTML(data.time)}
+            </p>
           </div>
 
         </div>
@@ -123,17 +207,25 @@ function renderTask() {
 
           <button type="button" data-action="update">
             <i class="fa-solid fa-pen"></i>
-            update
+            Update
           </button>
 
-          <button type="button" class="save" data-action="save">
+          <button
+            type="button"
+            class="save"
+            data-action="save"
+          >
             <i class="fa-solid fa-floppy-disk"></i>
-            save
+            Save
           </button>
 
-          <button type="button" class="delete" data-action="delete">
+          <button
+            type="button"
+            class="delete"
+            data-action="delete"
+          >
             <i class="fa-solid fa-trash"></i>
-            delete
+            Delete
           </button>
 
         </div>
@@ -142,12 +234,13 @@ function renderTask() {
     `)
     .join("");
 
+  updateStat();
+
   return tasks;
 }
 
 // INLINE UPDATE, SAVE AND DELETE
 container.addEventListener("click", (e) => {
-
   const button = e.target.closest("button");
 
   if (!button || !container.contains(button)) return;
@@ -160,14 +253,14 @@ container.addEventListener("click", (e) => {
 
   const taskId = parentdiv.dataset.id;
 
-  // UPDATE BUTTON
+  // UPDATE
   if (action === "update") {
-
     const title = parentdiv.querySelector(".title");
     const description = parentdiv.querySelector(".description");
 
     const titleInput = parentdiv.querySelector(".edit-title");
-    const descriptionInput = parentdiv.querySelector(".edit-description");
+    const descriptionInput =
+      parentdiv.querySelector(".edit-description");
 
     title.hidden = true;
     description.hidden = true;
@@ -178,29 +271,28 @@ container.addEventListener("click", (e) => {
     titleInput.focus();
   }
 
-  // SAVE BUTTON
+  // SAVE
   if (action === "save") {
-
     const titleInput = parentdiv.querySelector(".edit-title");
-    const descriptionInput = parentdiv.querySelector(".edit-description");
+    const descriptionInput =
+      parentdiv.querySelector(".edit-description");
 
     const newTitle = titleInput.value.trim();
     const newDescription = descriptionInput.value.trim();
 
     if (newTitle.length < 5) {
-      alert("Title must contain at least 5 characters");
+      alert("Title must contain at least 5 characters.");
       return;
     }
 
     if (newDescription.length < 10) {
-      alert("Description must contain at least 10 characters");
+      alert("Description must contain at least 10 characters.");
       return;
     }
 
     const tasks = getTask();
 
     const updatedTasks = tasks.map((task) => {
-
       if (task.id === taskId) {
         return {
           ...task,
@@ -212,15 +304,16 @@ container.addEventListener("click", (e) => {
       return task;
     });
 
-    localStorage.setItem("Mytask", JSON.stringify(updatedTasks));
+    localStorage.setItem(
+      "Mytask",
+      JSON.stringify(updatedTasks)
+    );
 
-    // IMMEDIATELY UPDATE UI
     renderTask();
   }
 
-  // DELETE BUTTON
+  // DELETE
   if (action === "delete") {
-
     const confirmDelete = confirm(
       "Are you sure you want to delete this task?"
     );
@@ -233,18 +326,52 @@ container.addEventListener("click", (e) => {
       (task) => task.id !== taskId
     );
 
-    localStorage.setItem("Mytask", JSON.stringify(remainingTasks));
+    localStorage.setItem(
+      "Mytask",
+      JSON.stringify(remainingTasks)
+    );
 
-    // IMMEDIATELY UPDATE UI
     renderTask();
   }
-
 });
 
-// EVENT LISTENERS
+// COMPLETION CHECKBOX
+container.addEventListener("change", (e) => {
+  if (e.target.dataset.action !== "complete") {
+    return;
+  }
+
+  const parentdiv = e.target.closest(".parentdiv");
+
+  if (!parentdiv) return;
+
+  const taskId = parentdiv.dataset.id;
+
+  const tasks = getTask();
+
+  const updatedTasks = tasks.map((task) => {
+    if (task.id === taskId) {
+      return {
+        ...task,
+        completed: e.target.checked
+      };
+    }
+
+    return task;
+  });
+
+  localStorage.setItem(
+    "Mytask",
+    JSON.stringify(updatedTasks)
+  );
+
+  renderTask();
+});
+
+//EVENT LISTENERS
 taskForm.addEventListener("submit", handleSubmit);
 
 cleardata.addEventListener("click", clearData);
 
-// RENDER EXISTING TASKS WHEN PAGE LOADS
+// INITIAL RENDER
 renderTask();
