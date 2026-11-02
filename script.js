@@ -18,16 +18,7 @@ function generateId() {
   return crypto.randomUUID();
 }
 
-// ESCAPE HTML
-function escapeHTML(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  })[char]);
-}
+
 
 // FORM SUBMISSION
 const handleSubmit = (e) => {
@@ -71,10 +62,10 @@ function getTask() {
   let changed = false;
 
   tasks.forEach((task) => {
-    if (!task.id) {
-      task.id = generateId();
-      changed = true;
-    }
+    // if (!task.id){
+    //   task.id = generateId();
+    //   changed = true;
+    // }
 
     if (typeof task.completed !== "boolean") {
       task.completed = false;
@@ -150,7 +141,7 @@ function renderTask() {
     .map((data) => `
       <div
         class="parentdiv ${data.completed ? "completed" : ""}"
-        data-id="${escapeHTML(data.id)}"
+        data-id="${data.id}"
       >
 
         <div class="task-status">
@@ -169,37 +160,37 @@ function renderTask() {
 
           <div>
             <h3 class="title">
-              ${escapeHTML(data.titles)}
+              ${data.titles}
             </h3>
 
             <input
               class="edit-title"
               type="text"
-              value="${escapeHTML(data.titles)}"
+              value="${data.titles}"
               hidden
             >
           </div>
 
           <div>
             <p class="description">
-              ${escapeHTML(data.description)}
+              ${data.description}
             </p>
 
             <textarea
               class="edit-description"
               hidden
-            >${escapeHTML(data.description)}</textarea>
+            >${data.description}</textarea>
           </div>
 
           <div>
             <p class="priority">
-              ${escapeHTML(data.level)}
+              ${data.level}
             </p>
           </div>
 
           <div>
             <p class="date">
-              ${escapeHTML(data.time)}
+              ${data.time}
             </p>
           </div>
 
@@ -240,6 +231,8 @@ function renderTask() {
 
   return tasks;
 }
+
+console.log(renderTask);
 
 // INLINE UPDATE, SAVE AND DELETE
 container.addEventListener("click", (e) => {
@@ -330,6 +323,9 @@ container.addEventListener("click", (e) => {
     const remainingTasks = tasks.filter(
       (task) => task.id !== taskId
     );
+
+
+    // UPDATE localStorage
 
     localStorage.setItem(
       "Mytask",
