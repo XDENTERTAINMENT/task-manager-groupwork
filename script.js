@@ -1,4 +1,3 @@
-
 const taskForm = document.getElementById("taskform");
 const taskTitleInput = document.getElementById("taskTitle");
 const taskDescInput = document.getElementById("taskDesc");
@@ -12,6 +11,7 @@ const cleardata = document.getElementById("cleardata");
 const pendingTask = document.getElementById("pending-task");
 const completedTask = document.getElementById("completed-task");
 const totalTask = document.getElementById("total-task");
+const updateTask = document.getElementById("updateTask");
 
 // GENERATE UNIQUE IDs
 function generateId() {
@@ -103,6 +103,8 @@ function saveTask(task) {
 // UPDATE DASHBOARD STATISTICS
 function updateStat() {
   const tasks = getTask();
+
+  console.log(tasks);
 
   const total = tasks.length;
 
@@ -281,13 +283,16 @@ container.addEventListener("click", (e) => {
     const newDescription = descriptionInput.value.trim();
 
     if (newTitle.length < 5) {
-      alert("Title must contain at least 5 characters.");
+      updateTask.textContent = "Title must contain at least 5 characters."
       return;
     }
 
     if (newDescription.length < 10) {
-      alert("Description must contain at least 10 characters.");
+      updateTask.textContent = "Description must contain at least 10 characters."
       return;
+    }
+    else{
+      updateTask.textContent = ""
     }
 
     const tasks = getTask();

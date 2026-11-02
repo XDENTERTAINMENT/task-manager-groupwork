@@ -212,7 +212,43 @@ form {
   flex-direction: column;
   gap: 10px;
   border: 1px solid gainsboro;
+  display: flex;
 }
+
+.parentdiv.completed .title,
+.parentdiv.completed .description,
+.parentdiv.completed .priority,
+.parentdiv.completed .date {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.task-status {
+  margin-bottom: 10px;
+}
+
+.taskmapping > div {
+  min-width: 0;
+}
+
+.edit-title,
+.edit-description {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  font: inherit;
+  padding: 8px;
+}
+
+.edit-description {
+  min-height: 80px;
+  resize: vertical;
+}
+
+[hidden] {
+  display: none !important;
+}
+
 footer {
   margin-top: 1rem;
   text-align: center;
@@ -222,9 +258,13 @@ footer {
   color: red;
 }
 
+.updateTask {
+  color: red;
+}
+
 /* mobile styling */
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   header {
     text-align: center;
   }
